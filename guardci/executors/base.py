@@ -10,7 +10,8 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass, field
 from importlib.metadata import entry_points
-from typing import Self
+
+from typing_extensions import Self
 
 
 @dataclass
