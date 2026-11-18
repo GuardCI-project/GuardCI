@@ -23,7 +23,6 @@
 
 > **Research dataset:** [Explore 110 EDA agent trajectories](https://github.com/GuardCI-project/EDA-agent-trajectories)
 > with tasks, tool traces, final reports, and historical audit evidence.
-> These are research records, not GuardCI acceptance results.
 
 ---
 
