@@ -40,9 +40,8 @@ commit history determine whether a result can be delivered.
 ## How it works
 
 ```mermaid
-flowchart LR
-    A["Recipe commit"] --> B["Git push + queue"]
-    B --> C["Owner-controlled worker"]
+flowchart TB
+    B["Git push + queue"] --> C["Owner-controlled worker"]
     C --> D{"Contract verdict"}
     D -->|"accepted · full / signoff"| E["Eligible for delivery"]
     D -->|"unfinished · violation · void"| F["Not deliverable"]
