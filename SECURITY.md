@@ -10,8 +10,9 @@ Do not put API keys, SSH keys, private designs or confidential artifacts in Git
 or bug reports. A passing check only establishes the declared checks and evidence
 coverage, not safety outside that scope.
 
-Before publishing this repository, the maintainer must configure a private
-vulnerability-reporting channel on the hosting service and document its location.
-No security email address, hosted service or response SLA is currently declared.
-Until a private channel exists, do not post exploitable details or sensitive
-reproductions publicly.
+Report vulnerabilities privately using
+[GitHub private vulnerability reporting](https://github.com/GuardCI-project/GuardCI/security/advisories/new).
+Sign in to GitHub and include the affected version, impact and a minimal
+reproduction without credentials or confidential design data. Do not post
+exploitable details or sensitive reproductions in public issues.
+No response SLA or hosted service is currently declared.

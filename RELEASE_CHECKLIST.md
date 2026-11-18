@@ -9,8 +9,8 @@ does not imply a release tag, PyPI upload or a publicly distributed EDA image.
   MIT distribution of this release, including its ports and project fixtures.
 - [x] Preserve provenance and any required third-party notices.
 - [x] Publish under GuardCI-project at https://github.com/GuardCI-project/GuardCI.
-- [ ] Configure and document a private vulnerability-reporting channel before
-  public publication (see SECURITY.md).
+- [x] GitHub private vulnerability reporting is enabled; its reporting link is
+  documented in SECURITY.md.
 
 ## Technical release gate
 
