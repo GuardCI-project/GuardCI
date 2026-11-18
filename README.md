@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="docs/assets/guardci-mark.svg" alt="GuardCI circuit monogram" width="80" height="80">
+  <img src="docs/assets/guardci-logo.svg" alt="GuardCI — verification gate" width="408" height="128">
 </p>
-
-<h1 align="center">GuardCI</h1>
 
 <p align="center">
   <strong>Continuous verification for autonomous EDA.</strong><br>

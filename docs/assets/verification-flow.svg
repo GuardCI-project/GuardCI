@@ -4,29 +4,29 @@
   <style>
     svg { font-family: Arial, Helvetica, sans-serif; }
     .card { fill: #fff; stroke: #d4dce5; stroke-width: 1.5; }
-    .verify { fill: #f3fbfa; stroke: #0d9488; stroke-width: 1.7; }
-    .kicker { fill: #0b6f66; font-size: 12px; font-weight: 600; letter-spacing: .6px; }
+    .verify { fill: #f4f6ff; stroke: #3158c8; stroke-width: 1.7; }
+    .kicker { fill: #2747a3; font-size: 12px; font-weight: 600; letter-spacing: .6px; }
     .title { fill: #172b3a; font-size: 20px; font-weight: 600; }
     .subtitle { fill: #526273; font-size: 14px; }
     .connector { fill: none; stroke: #718096; stroke-width: 1.6; }
-    .accepted { fill: none; stroke: #0d9488; stroke-width: 1.8; }
-    .label { fill: #0b6f66; font-size: 12px; font-weight: 600; }
+    .accepted { fill: none; stroke: #3158c8; stroke-width: 1.8; }
+    .label { fill: #2747a3; font-size: 12px; font-weight: 600; }
     .outcome { fill: #f8fafc; stroke: #d4dce5; stroke-width: 1.5; }
     .outcome-title { fill: #172b3a; font-size: 16px; font-weight: 600; }
     .detail { fill: #526273; font-size: 13px; }
     .arrow { fill: #718096; }
-    .arrow-teal { fill: #0d9488; }
+    .arrow-teal { fill: #3158c8; }
     @media (prefers-color-scheme: dark) {
       .card { fill: #111827; stroke: #475569; }
-      .verify { fill: #122e31; stroke: #5eead4; }
-      .kicker, .label { fill: #5eead4; }
+      .verify { fill: #18213e; stroke: #9aafff; }
+      .kicker, .label { fill: #9aafff; }
       .title, .outcome-title { fill: #e5edf5; }
       .subtitle, .detail { fill: #bdc9d5; }
       .connector { stroke: #94a3b8; }
-      .accepted { stroke: #5eead4; }
+      .accepted { stroke: #9aafff; }
       .outcome { fill: #172230; stroke: #475569; }
       .arrow { fill: #94a3b8; }
-      .arrow-teal { fill: #5eead4; }
+      .arrow-teal { fill: #9aafff; }
     }
   </style>
   <defs>
