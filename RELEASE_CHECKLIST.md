@@ -21,7 +21,7 @@ does not imply a release tag, PyPI upload or a publicly distributed EDA image.
 - Run the real Git + continuous-worker static smoke test from each installation.
 - Scan source and archives for credentials, private paths, caches and internal data.
 - Ensure no original Git history, experiment outputs or private papers are included.
-- Verify CI in the hosting repository before tagging.
+- Record the local validation results before tagging; GitHub Actions CI is not configured.
 
 ## External EDA qualification (not bundled)
 

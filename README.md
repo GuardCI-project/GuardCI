@@ -8,7 +8,6 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/GuardCI-project/GuardCI/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/GuardCI-project/GuardCI/ci.yml?branch=main&amp;style=flat-square&amp;label=checks" alt="GitHub Actions checks"></a>
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square" alt="Python 3.10 and newer">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0f766e?style=flat-square" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/status-research%20prototype-64748b?style=flat-square" alt="Research prototype">
