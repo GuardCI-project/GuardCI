@@ -884,7 +884,7 @@ def test_no_executor_fail_closed(pipe, tmp_path):
         st.close()
 
 
-def test_shared_cache_baseline_metrics(pipe, tmp_path):
+def test_shared_cache_baseline_metrics(pipe, tmp_path, monkeypatch):
     """Two projects, one cache dir, same baseline tree: the second
     never builds the baseline — its root gets metrics from
     golden/<tree>/baseline.json and its nodes get verdicts (§9.4)."""
@@ -893,6 +893,11 @@ def test_shared_cache_baseline_metrics(pipe, tmp_path):
     drain(proj, work)                       # populates golden + memos
     bsha1 = baseline_sha(proj)
     assert node(proj, bsha1).metrics["setup_wns"] == 0.1
+
+    # Distinct commits even when both projects initialize in the same second.
+    timestamp = int(_git(proj / "remote.git", "show", "-s", "--format=%ct", bsha1)) + 1
+    monkeypatch.setenv("GIT_AUTHOR_DATE", f"@{timestamp} +0000")
+    monkeypatch.setenv("GIT_COMMITTER_DATE", f"@{timestamp} +0000")
 
     # second project: own remote seeded from the same tree, same cache
     proj2 = tmp_path / "proj2"
@@ -914,6 +919,8 @@ def test_shared_cache_baseline_metrics(pipe, tmp_path):
 
     bsha2 = baseline_sha(proj2)
     assert bsha2 != bsha1                    # different commit …
+    assert _git(proj / "remote.git", "rev-parse", f"{bsha1}^{{tree}}") == _git(
+        proj2 / "remote.git", "rev-parse", f"{bsha2}^{{tree}}")
     assert node(proj2, bsha2).metrics["setup_wns"] == 0.1   # same tree
     # the baseline was not built a second time
     assert not [s_ for s_, s in FakeFlow.ran if s_ == bsha2]
