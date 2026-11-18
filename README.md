@@ -1,14 +1,65 @@
-# GuardCI
+<p align="center">
+  <img src="docs/assets/readme-banner.svg" alt="GuardCI — Git-native verification for autonomous EDA" width="100%">
+</p>
 
-A Git remote with continuous verification for autonomous EDA.
+<p align="center">
+  <strong>Your agent writes the recipe. Your CI decides what ships.</strong><br>
+  An owner-controlled Git remote that checks design contracts before delivery.
+</p>
 
-Authors push implementation recipes; an owner-controlled worker checks the
-protected design and contract. A successful push queues work — it does not mean
-the design passed. GuardCI is a single-host research prototype.
+<p align="center">
+  <a href="https://github.com/GuardCI-project/GuardCI/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/GuardCI-project/GuardCI/ci.yml?branch=main&amp;style=flat-square&amp;label=checks" alt="GitHub Actions checks"></a>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square" alt="Python 3.10 and newer">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0f766e?style=flat-square" alt="MIT license"></a>
+  <img src="https://img.shields.io/badge/status-research%20prototype-64748b?style=flat-square" alt="Research prototype">
+</p>
 
-## Install from source
+<p align="center">
+  <a href="#why-guardci">Why GuardCI</a> &nbsp;·&nbsp;
+  <a href="#quick-start">Quick start</a> &nbsp;·&nbsp;
+  <a href="#real-design-verification">Real EDA</a> &nbsp;·&nbsp;
+  <a href="#verdicts">Verdicts</a> &nbsp;·&nbsp;
+  <a href="#documentation">Documentation</a>
+</p>
 
-Requirements: Linux, Python 3.10+, Git 2.28+.
+---
+
+## Why GuardCI
+
+Autonomous agents can change implementation recipes quickly. GuardCI keeps the
+acceptance decision outside the agent: protected inputs, configured checks and
+commit history determine whether a result can be delivered.
+
+| Protect the task | Verify independently | Preserve the evidence |
+| :--- | :--- | :--- |
+| Keep the baseline and contract under owner control. Check that changes stay within the permitted recipe. | Build and measure with the owner\'s configured tools, rather than accepting the agent\'s claims. | Track verdicts and invalid ancestry. Export eligible design artifacts with a SHA-256 manifest. |
+
+> **A successful `git push` means queued, not accepted.**
+> Only `accepted` results with `full` or `signoff` coverage are eligible for delivery.
+
+## How it works
+
+```mermaid
+flowchart LR
+    A["Recipe commit"] --> B["Git push + queue"]
+    B --> C["Owner-controlled worker"]
+    C --> D{"Contract verdict"}
+    D -->|"accepted · full / signoff"| E["Eligible for delivery"]
+    D -->|"unfinished · violation · void"| F["Not deliverable"]
+    classDef eligible fill:#ecfdf5,stroke:#0f766e,color:#134e4a
+    classDef blocked fill:#f1f5f9,stroke:#64748b,color:#334155
+    class E eligible
+    class F blocked
+```
+
+The owner calls `guardci deliver` separately. It exports an eligible result;
+the selected commit need not be `HEAD`.
+
+## Quick start
+
+**Linux · Python 3.10+ · Git 2.28+** — no EDA tools required for the static demo.
+
+### 1. Install
 
 ```sh
 git clone https://github.com/GuardCI-project/GuardCI.git
@@ -19,26 +70,29 @@ python -m pip install .
 guardci --help
 ```
 
-The source distribution and wheel are installable without the original research
-workspace. No experiment data, model credentials, PDKs or tool binaries are bundled.
-This is a release candidate, not a package already published on PyPI.
-
-## Try the Git + CI loop without EDA tools
+### 2. Try the Git + CI loop
 
 ```sh
 python scripts/smoke_git_ci.py --root /absolute/path/to/new-smoke-directory
 ```
 
-This starts a continuous worker before real Git pushes, checks a legal recipe,
-rejects a protected-input change, observes invalid descendants, and recovers on
-a clean branch. It uses a static-only contract and the null flow: it is **not**
-physical-design signoff. The script retains its evidence and stops its own worker.
+The demo runs a continuous worker and exercises real Git pushes: a legal recipe,
+a protected-input change, an invalid descendant, clean-branch recovery and a
+queued commit processed after restart. It retains evidence and stops its worker.
+
+> **Demo boundary:** this uses a static-only contract and the null flow.
+> It is not physical-design signoff.
 
 ## Real design verification
 
-First provision a compatible validator image and an ORFS flow tree; see
-[validator requirements](docs/VALIDATOR.md). A development image tag is not a
-public installation channel.
+Bring a compatible validator image, an ORFS flow tree and licensed design/PDK
+inputs. These are **not bundled**; start with the [validator guide](docs/VALIDATOR.md).
+A development image tag is not a public installation channel.
+
+<details>
+<summary><strong>Set up the worker, push a recipe and export a result</strong></summary>
+
+### Owner: initialize and serve
 
 ```sh
 PROJECT="$PWD/my-ci-project"
@@ -46,11 +100,15 @@ guardci init "$PROJECT" --contract orfs-rebuild --flow orfs \
   --platform nangate45 --design gcd --reset-port reset \
   --from /absolute/path/to/flow --image YOUR_VALIDATOR_IMAGE \
   --slots 1 --cpus-per-slot 4 --memory 16g
-# Review affinity, locks and resource limits for your host before starting.
 guardci serve --project "$PROJECT"
 ```
 
-In another terminal, using the same absolute PROJECT path:
+Review CPU affinity, lock directories and resource limits for your host before
+starting. Keep the worker running to process incoming commits.
+
+### Author: commit, push and inspect
+
+In another terminal, set `PROJECT` to the **same absolute path**:
 
 ```sh
 git clone "$PROJECT/remote.git" work
@@ -62,28 +120,43 @@ git push origin HEAD:main
 guardci status "$(git rev-parse HEAD)" --json --project "$PROJECT"
 ```
 
-Poll the exact commit until terminal. Only accepted with full/signoff coverage
-is eligible for delivery. The owner exports with:
+Poll the exact commit until its verdict is terminal. Check both the verdict and
+coverage, not just the CLI exit code.
+
+### Owner: deliver
 
 ```sh
 guardci deliver --out /absolute/path/to/new-delivery --project "$PROJECT"
 ```
 
-Inspect the manifest's selected node and hashes; selection need not equal HEAD.
+Inspect the manifest\'s selected node and file hashes. Delivery does not implicitly
+accept the current branch tip.
+
+</details>
 
 ## Verdicts
 
-| Verdict | Meaning |
-|---|---|
-| accepted | Applicable contract requirements satisfied; warnings may remain. |
-| unfinished | Exit requirements unmet; not deliverable. |
-| violation | An invariant failed; not deliverable. |
-| void | Invalid ancestry under the configured policy; not deliverable. |
+| Verdict | What it means | Delivery |
+| :--- | :--- | :--- |
+| `accepted` | Applicable contract requirements are satisfied; warnings may remain. | Eligible with `full` / `signoff` coverage |
+| `unfinished` | Exit requirements are unmet; this is not by itself an invariant violation. | No |
+| `violation` | An invariant failed. | No |
+| `void` | Invalid ancestry under the configured policy. | No |
 
-Pending, unknown or verifying results are not passes. A reference baseline's
-internal state is not sufficient evidence of delivery eligibility.
+`pending`, `verifying` and `unknown` are **not passes**. An internal reference-baseline
+state is not sufficient evidence of delivery eligibility.
 
-## Development and documentation
+## Documentation
+
+| Start here | Go deeper |
+| :--- | :--- |
+| [Operations](docs/OPERATIONS.md) — Git, workers and delivery | [Architecture](docs/DESIGN.md) — components and trust boundaries |
+| [Contracts](docs/CONTRACTS.md) — policies and acceptance rules | [Validator setup](docs/VALIDATOR.md) — external EDA requirements |
+| [Contributing](CONTRIBUTING.md) — development and tests | [Security](SECURITY.md) — isolation and private reporting |
+| [Release checklist](RELEASE_CHECKLIST.md) — publication gates | [Provenance](THIRD_PARTY_NOTICES.md) — source and dependency notices |
+
+<details>
+<summary><strong>Development commands</strong></summary>
 
 ```sh
 python -m pip install ".[dev]"
@@ -92,18 +165,18 @@ ruff check .
 python -m build
 ```
 
-Host Tcl and Icarus enable optional script/simulation regressions; skipped tests
-are reported explicitly. See [contributing](CONTRIBUTING.md),
-[operations](docs/OPERATIONS.md), [contracts](docs/CONTRACTS.md),
-[architecture](docs/DESIGN.md), and [security](SECURITY.md).
+Host Tcl and Icarus enable optional script and simulation regressions; report
+skipped tests explicitly. Distribution checks and smoke tests are documented in
+[Contributing](CONTRIBUTING.md).
 
-## Licensing and release status
+</details>
+
+## Scope and license
+
+**Version 0.0.1 is a single-host research prototype**, not a hardened multi-tenant
+Git service or a turnkey EDA distribution. It is not published on PyPI. No
+experiment data, model credentials, PDKs or tool binaries are bundled.
 
 GuardCI is licensed under [MIT](LICENSE), including the ppa-hack-bench ports
-authorized by their owner. Preserve [provenance notices](THIRD_PARTY_NOTICES.md).
-The source repository is [GuardCI-project/GuardCI](https://github.com/GuardCI-project/GuardCI).
-
-Version 0.0.1 is a research-prototype release candidate, not a turnkey EDA service.
-External EDA tools, PDKs and validator images are not distributed here and require
-separate licensing and setup. See the [release checklist](RELEASE_CHECKLIST.md)
-before creating a release tag or publishing packages to a registry.
+authorized by their owner. Preserve the [provenance notices](THIRD_PARTY_NOTICES.md);
+external tools, PDKs and images retain their own licensing requirements.
