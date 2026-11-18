@@ -1,10 +1,12 @@
 <p align="center">
-  <img src="docs/assets/readme-banner.svg" alt="GuardCI — Git-native verification for autonomous EDA" width="100%">
+  <img src="docs/assets/guardci-mark.svg" alt="GuardCI circuit monogram" width="80" height="80">
 </p>
 
+<h1 align="center">GuardCI</h1>
+
 <p align="center">
-  <strong>Your agent writes the recipe. Your CI decides what ships.</strong><br>
-  An owner-controlled Git remote that checks design contracts before delivery.
+  <strong>Continuous verification for autonomous EDA.</strong><br>
+  Push a recipe. Verify the contract. Deliver the evidence.
 </p>
 
 <p align="center">
@@ -32,24 +34,16 @@ commit history determine whether a result can be delivered.
 
 | Protect the task | Verify independently | Preserve the evidence |
 | :--- | :--- | :--- |
-| Keep the baseline and contract under owner control. Check that changes stay within the permitted recipe. | Build and measure with the owner\'s configured tools, rather than accepting the agent\'s claims. | Track verdicts and invalid ancestry. Export eligible design artifacts with a SHA-256 manifest. |
+| Keep the baseline and contract under owner control. Check that changes stay within the permitted recipe. | Build and measure with the owner's configured tools, rather than accepting the agent's claims. | Track verdicts and invalid ancestry. Export eligible design artifacts with a SHA-256 manifest. |
 
 > **A successful `git push` means queued, not accepted.**
 > Only `accepted` results with `full` or `signoff` coverage are eligible for delivery.
 
 ## How it works
 
-```mermaid
-flowchart TB
-    B["Git push + queue"] --> C["Owner-controlled worker"]
-    C --> D{"Contract verdict"}
-    D -->|"accepted · full / signoff"| E["Eligible for delivery"]
-    D -->|"unfinished · violation · void"| F["Not deliverable"]
-    classDef eligible fill:#ecfdf5,stroke:#0f766e,color:#134e4a
-    classDef blocked fill:#f1f5f9,stroke:#64748b,color:#334155
-    class E eligible
-    class F blocked
-```
+<p align="center">
+  <img src="docs/assets/verification-flow.svg" alt="Recipe commits enter the verification queue. An owner-controlled worker checks the contract. Only accepted results with full or signoff coverage are eligible for owner delivery; unfinished, violation and void results are not deliverable." width="100%">
+</p>
 
 The owner calls `guardci deliver` separately. It exports an eligible result;
 the selected commit need not be `HEAD`.
@@ -128,7 +122,7 @@ coverage, not just the CLI exit code.
 guardci deliver --out /absolute/path/to/new-delivery --project "$PROJECT"
 ```
 
-Inspect the manifest\'s selected node and file hashes. Delivery does not implicitly
+Inspect the manifest's selected node and file hashes. Delivery does not implicitly
 accept the current branch tip.
 
 </details>

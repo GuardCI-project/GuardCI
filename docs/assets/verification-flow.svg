@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="285" viewBox="0 0 900 285" role="img" aria-labelledby="title desc">
+  <title id="title">GuardCI verification and delivery flow</title>
+  <desc id="desc">A Git push is queued for an owner-controlled worker. Only accepted results with full or signoff coverage are eligible for owner delivery. Unfinished, violation and void results are not deliverable.</desc>
+  <style>
+    svg { font-family: Arial, Helvetica, sans-serif; }
+    .card { fill: #fff; stroke: #d4dce5; stroke-width: 1.5; }
+    .verify { fill: #f3fbfa; stroke: #0d9488; stroke-width: 1.7; }
+    .kicker { fill: #0b6f66; font-size: 12px; font-weight: 600; letter-spacing: .6px; }
+    .title { fill: #172b3a; font-size: 20px; font-weight: 600; }
+    .subtitle { fill: #526273; font-size: 14px; }
+    .connector { fill: none; stroke: #718096; stroke-width: 1.6; }
+    .accepted { fill: none; stroke: #0d9488; stroke-width: 1.8; }
+    .label { fill: #0b6f66; font-size: 12px; font-weight: 600; }
+    .outcome { fill: #f8fafc; stroke: #d4dce5; stroke-width: 1.5; }
+    .outcome-title { fill: #172b3a; font-size: 16px; font-weight: 600; }
+    .detail { fill: #526273; font-size: 13px; }
+    .arrow { fill: #718096; }
+    .arrow-teal { fill: #0d9488; }
+    @media (prefers-color-scheme: dark) {
+      .card { fill: #111827; stroke: #475569; }
+      .verify { fill: #122e31; stroke: #5eead4; }
+      .kicker, .label { fill: #5eead4; }
+      .title, .outcome-title { fill: #e5edf5; }
+      .subtitle, .detail { fill: #bdc9d5; }
+      .connector { stroke: #94a3b8; }
+      .accepted { stroke: #5eead4; }
+      .outcome { fill: #172230; stroke: #475569; }
+      .arrow { fill: #94a3b8; }
+      .arrow-teal { fill: #5eead4; }
+    }
+  </style>
+  <defs>
+    <marker id="neutral" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="m0 0 8 4-8 4z" class="arrow"/></marker>
+    <marker id="teal" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="m0 0 8 4-8 4z" class="arrow-teal"/></marker>
+  </defs>
+  <g transform="translate(0 -35)">
+    <rect x="24" y="70" width="208" height="116" rx="12" class="card"/>
+    <rect x="320" y="70" width="260" height="116" rx="12" class="verify"/>
+    <rect x="680" y="70" width="196" height="116" rx="12" class="card"/>
+    <text x="44" y="99" class="kicker">01 / AUTHOR</text>
+    <text x="44" y="128" class="title">Recipe commit</text>
+    <text x="44" y="153" class="subtitle">Git push + queue</text>
+    <text x="340" y="99" class="kicker">02 / OWNER-CONTROLLED</text>
+    <text x="340" y="128" class="title">Verify contract</text>
+    <text x="340" y="153" class="subtitle">Protected inputs + checks</text>
+    <text x="696" y="99" class="kicker">03 / OWNER</text>
+    <text x="696" y="128" class="title">Deliver artifacts</text>
+    <text x="696" y="153" class="subtitle">Accepted, full / signoff</text>
+    <path d="M232 128h80" class="connector" marker-end="url(#neutral)"/>
+    <path d="M580 128h92" class="accepted" marker-end="url(#teal)"/>
+    <text x="626" y="111" text-anchor="middle" class="label">accepted</text>
+    <path d="M450 186v37" class="connector" marker-end="url(#neutral)"/>
+    <rect x="302" y="230" width="296" height="44" rx="22" class="outcome"/>
+    <text x="450" y="258" text-anchor="middle" class="outcome-title">Not deliverable</text>
+    <text x="450" y="299" text-anchor="middle" class="detail">unfinished / violation / void</text>
+  </g>
+</svg>
