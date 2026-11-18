@@ -1,0 +1,44 @@
+name: orfs-static-only
+extends: orfs-default
+
+# Static-layer-only contract for tests: adds the recipe-judging
+# statics (kept in the code for fixture-based tests — the builtin
+# packs no longer carry them), drops every light/heavy clause
+# inherited from orfs-default, and empties routing so nodes can reach
+# a terminal verdict without registered executors.
+
+verification: {void: until_restored}
+protection: {mode: explicit}
+
+clauses:
+  - {check: design_identity, kind: invariant, severity: hard}
+  - {check: protected_refs,  severity: info}
+  - {check: sdc_delta,       against: golden, severity: info}
+  - {check: equivalence, remove: true}
+  - {check: equivalence_proof, remove: true}
+  - {check: equivalence_strict, remove: true}
+  - {check: sta_setup, remove: true}
+  - {check: sta_setup_margin, remove: true}
+  - {check: sta_hold, remove: true}
+  - {check: electrical, remove: true}
+  - {check: drc, remove: true}
+  - {check: cell_census, remove: true}
+  - {check: pdn, remove: true}
+  - {check: ir_drop, remove: true}
+  - {check: library_closure, remove: true}
+  - {check: provenance, remove: true}
+  - {check: reproducible, remove: true}
+
+routing:
+  constraints:        []
+  synthesis:          []
+  floorplan:          []
+  placement:          []
+  cts:                []
+  routing:            []
+  physical_integrity: []
+  design_refs:        []
+  library_refs:       []
+  scripts:            []
+  measurement:        []
+  unknown:            []

@@ -1,0 +1,22 @@
+name: orfs-rebuild-legacy
+extends: orfs-default
+
+# Test fixture: the pre-W5 orfs-rebuild clause set. The builtin
+# rebuild packs now judge by the default pack's rules; the
+# recipe-judging statics are still exercised through this fixture.
+
+verification: {source: rebuild, fallback: rebuild, void: until_restored}
+
+protection: {mode: explicit}
+
+edges:
+  - {metric: hold_wns,        no_regress: true, rel_tol: 0.5, severity: warn}
+  - {metric: drc_count,       no_regress: true, severity: warn}
+  - {metric: electrical_violations, no_regress: true, severity: hard}
+  - {metric: cells_by_type,   no_regress: true, rel_tol: 0.2, severity: warn}
+  - {metric: pdn_shapes,      no_regress: true, rel_tol: 0.3, severity: warn}
+
+clauses:
+  - {check: design_identity, kind: invariant, severity: hard}
+  - {check: protected_refs,  severity: info}
+  - {check: sdc_delta,       against: golden, severity: info}

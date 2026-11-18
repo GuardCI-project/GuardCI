@@ -1,0 +1,10 @@
+name: orfs-rebuild
+extends: orfs-default
+
+# The hermetic mode (§11): the CI executes the recipe itself.  The
+# rules are the default pack's — the same invariants, the same default
+# protection, void: descendants; the only difference is that the
+# evidence comes from the CI's own rebuild, not author artifacts
+# (the recorded episodes hold no stage design states).
+
+verification: {source: rebuild, fallback: rebuild}

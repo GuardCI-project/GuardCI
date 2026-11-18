@@ -1,0 +1,69 @@
+name: orfs-default
+extends: null
+
+# Repository layout mirrors an OpenROAD-flow-scripts `flow/` directory so
+# the agent's usual `make DESIGN_CONFIG=./designs/<platform>/<design>/config.mk`
+# works unchanged. results/ logs/ reports/ objects/ are ignored (drafts).
+
+verification: {mode: full, source: artifact, fallback: none, void: descendants}
+                                  # mode: full | routed (§11.4)
+                                  # source: artifact | rebuild (§12.1)
+                                  # fallback: rebuild | none (§12.1)
+                                  # void: descendants | until_restored
+                                  #   descendants — a node rejected by
+                                  #   any invariant voids every
+                                  #   descendant, permanently
+
+# protection: {mode: default, rel_tol: 0.05} — the default. Every
+# measurable dimension is protected against regression unless the
+# owner lists it under `tradable`; the implicit ratchets replace the
+# former `edges:` list (an edges: entry on a protected dimension
+# overrides only its params/severity).
+
+protected:                            # read-only for the agent; CI uses a private copy
+  - designs/src/**                    # golden RTL
+  - designs/*/*/constraint.sdc        # golden (signoff) SDC
+  - platforms/**                      # PDK, libraries, LEF, RC models, corners
+recipe:                               # what a commit may change
+  - designs/*/*/config.mk
+  - designs/*/*/impl.sdc              # implementation constraints: free
+  - designs/*/*/*.tcl                 # design-local hook scripts
+  - scripts/**                        # flow scripts
+  - Makefile
+
+clauses:
+  # static — run on every commit
+  - {check: recipe_scope,    kind: invariant, severity: hard}    # diff stays inside `recipe`
+  - {check: library_closure,       kind: invariant, severity: hard}    # §12.3: artifact is closed under the baseline libraries (golden LEFs/liberty)
+  # equivalence (§11.5) — measurement name stays `lec`
+  - {check: equivalence,        kind: invariant, timeout: 1800, induction_seconds: 120, bmc_depth: 20, sim_cycles: 200000, sim_seconds: 600, min_cycles: 10000, seed: 1, severity: hard}
+  - {check: equivalence_proof,  kind: exit, accept: [proven, proven_sequential, bounded], severity: hard}
+  - {check: equivalence_strict, kind: exit, accept: [proven, proven_sequential], severity: warn}
+  # heavy — the CI measures `min_period` under golden SDC/libs; the owner states the bound (§11.3)
+  - {check: sta_setup,       kind: exit, max_period: {ratio: 1.0, of: baseline}, severity: hard}
+  - {check: sta_setup_margin, kind: exit, min_ratio: 0.005, severity: warn}
+  - {check: sta_hold,        kind: exit, min_wns: 0, severity: hard}
+  - {check: electrical,      kind: exit, max: baseline, severity: hard}
+  - {check: drc,             kind: exit, max: baseline, per_category: true, severity: hard}
+  - {check: cell_census,     kind: exit, types: [tapcell, endcap], min_ratio: 0.8, severity: hard}
+  - {check: pdn,             kind: exit, severity: hard}
+  - {check: ir_drop,         kind: exit, max_growth: 1.5, min_delta: 0.005, severity: warn}
+  - {check: provenance,      kind: exit, severity: warn}         # §12.3: consistent|rebuilt pass, stale fails
+  - {check: reproducible,    kind: exit, mode: contract, severity: hard}
+                                  # §12.5: decided by `guardci deliver`
+  # stage-gate example (§12.4): a clause may pin itself to a stage
+  # - {check: metric_bound, id: est_wns, metric: est_setup_wns, min: -0.02, stage: place, kind: exit, severity: warn}
+
+routing:                              # only used when verification.mode: routed
+  constraints:        [lec, sta_setup, sta_hold]
+  synthesis:          [lec]
+  floorplan:          [heavy]
+  placement:          [heavy]
+  cts:                [heavy]
+  routing:            [heavy]
+  physical_integrity: [sta_hold, electrical, cell_census, pdn, ir_drop, drc]
+  design_refs:        [lec]
+  library_refs:       [heavy]
+  scripts:            [heavy]
+  measurement:        []
+  unknown:            [heavy]

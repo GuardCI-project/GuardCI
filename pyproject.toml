@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "guardci"
+version = "0.0.1"
+description = "GuardCI — a git remote with continuous verification for autonomous EDA"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+dependencies = [
+    "pyyaml>=6.0,<7",
+    "click>=8.1,<9",
+]
+
+[project.urls]
+Repository = "https://github.com/GuardCI-project/GuardCI"
+Issues = "https://github.com/GuardCI-project/GuardCI/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<10",
+    "ruff>=0.9,<1",
+    "build>=1.2,<2",
+]
+
+[project.scripts]
+guardci = "guardci.cli.main:cli"
+guardci-remote = "guardci.remote.hook:main"
+
+[project.entry-points."guardci.flows"]
+null = "guardci.flows.null:NullFlow"
+orfs = "guardci.flows.orfs.adapter:OrfsFlow"
+
+[project.entry-points."guardci.checkers"]
+recipe_scope = "guardci.checks.recipe_scope:RecipeScope"
+design_identity = "guardci.checks.design_identity:DesignIdentity"
+protected_refs = "guardci.checks.protected_refs:ProtectedRefs"
+sdc_delta = "guardci.checks.sdc_delta:SdcDelta"
+lec = "guardci.checks.measurement:Lec"
+sta_setup = "guardci.checks.measurement:StaSetup"
+sta_setup_margin = "guardci.checks.measurement:StaSetupMargin"
+sta_hold = "guardci.checks.measurement:StaHold"
+electrical = "guardci.checks.measurement:Electrical"
+drc = "guardci.checks.measurement:Drc"
+cell_census = "guardci.checks.measurement:CellCensus"
+pdn = "guardci.checks.measurement:Pdn"
+ir_drop = "guardci.checks.measurement:IrDrop"
+
+[project.entry-points."guardci.backends"]
+openroad = "guardci.backends.openroad:OpenRoadBackend"
+openroad_facts = "guardci.backends.openroad:FactsBackend"
+klayout = "guardci.backends.klayout:KLayoutBackend"
+kepler_formal = "guardci.backends.kepler_formal:KeplerFormalBackend"
+
+[project.entry-points."guardci.executors"]
+docker = "guardci.executors.docker:DockerExecutor"
+
+[tool.setuptools.packages.find]
+include = ["guardci*"]
+
+[tool.setuptools.package-data]
+"guardci.contract" = ["packs/*.yaml"]
+"guardci.backends" = ["*.v"]
+"guardci.flows.orfs" = ["*.yaml"]
+"guardci.backends.openroad" = ["*.tcl"]
+
+[tool.ruff]
+line-length = 100

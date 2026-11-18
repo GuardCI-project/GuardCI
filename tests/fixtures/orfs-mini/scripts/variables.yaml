@@ -1,0 +1,8 @@
+CORE_UTILIZATION:
+  stages: [floorplan]
+CTS_BUF_DISTANCE:
+  stages: [cts]
+PDN_TCL:
+  stages: [floorplan]
+DUMMY_ALL:
+  stages: [All stages]

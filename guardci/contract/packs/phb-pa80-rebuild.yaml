@@ -1,0 +1,11 @@
+name: phb-pa80-rebuild
+extends: orfs-rebuild
+
+# the recorded tasks trade power for their period/area targets
+tradable: [power_total]
+
+# The recorded ppa-hack-bench tasks' own targets (§11.3):
+# period and cell area ≤ 0.8 × the reference implementation.
+clauses:
+  - {check: sta_setup,    kind: exit, max_period: {ratio: 0.8, of: baseline}, severity: hard}
+  - {check: metric_bound, id: area, metric: cell_area, max: {ratio: 0.8, of: baseline}, kind: exit, severity: hard}

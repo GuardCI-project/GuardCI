@@ -1,0 +1,74 @@
+{
+ "pdn_wires_by_layer": {
+  "via:via5_6_960_2800_5_2_600_600": 6, 
+  "metal4": 3, 
+  "metal7": 3, 
+  "metal1": 24, 
+  "via:via6_7_960_2800_4_1_600_600": 6, 
+  "via:via3_4_960_340_1_3_320_320": 36, 
+  "via:via1_2_960_340_1_3_300_300": 36, 
+  "via:via4_5_960_2800_5_2_600_600": 6, 
+  "via:via2_3_960_340_1_3_320_320": 36
+ }, 
+ "spacer_instances": 256, 
+ "unconstrained_endpoints": 0, 
+ "period": 0.435, 
+ "check_placement": "pass", 
+ "instances": 732, 
+ "clocks": "core_clock=0.435000,vclk_core_clock=0.435000", 
+ "unconstrained_endpoints_method": "check_timing_cmd", 
+ "core_area_um2": 1076.768, 
+ "power_internal": 0.0019995865877717733, 
+ "setup_wns_over_period": 0.000635315572921554, 
+ "ir_drop_worst_v": [
+  {
+   "max": 1.099245, 
+   "net": "VDD", 
+   "voltage": 1.1, 
+   "min": 1.093844
+  }, 
+  {
+   "max": 0.003889, 
+   "net": "VSS", 
+   "voltage": 0.0, 
+   "min": 0.000932
+  }
+ ], 
+ "max_slew_violations": 0, 
+ "clock_gate_cells_method": "instance:is_clock_gate", 
+ "power_total": 0.0036118756979703903, 
+ "max_cap_violations": 0, 
+ "setup_wns": 0.000276362274220876, 
+ "instances_sequential": 35, 
+ "power_leakage": 2.5245682991226204e-05, 
+ "setup_tns": 0.0, 
+ "max_fanout_violations": 0, 
+ "hold_wns": 0.12280071751495665, 
+ "power_switching": 0.0015870435163378716, 
+ "clock_gate_cells": 0, 
+ "hold_tns": 0.0, 
+ "time_unit": "ns", 
+ "special_nets": [
+  "VDD", 
+  "VSS"
+ ], 
+ "cells_by_type": {
+  "CORE": {
+   "count": 686, 
+   "area_um2": 924.8820000000021
+  }, 
+  "CORE_WELLTAP": {
+   "count": 46, 
+   "area_um2": 12.236
+  }, 
+  "CORE_SPACER": {
+   "count": 256, 
+   "area_um2": 139.65000000000012
+  }
+ }, 
+ "spacer_area_um2": 139.65000000000012, 
+ "antenna_violations": 0, 
+ "unplaced_instances": 0, 
+ "cell_area_um2": 937.1180000000022, 
+ "die_area_um2": 1278.420025
+}

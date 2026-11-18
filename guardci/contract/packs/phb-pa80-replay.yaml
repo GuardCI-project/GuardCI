@@ -1,0 +1,6 @@
+name: phb-pa80-replay
+extends: phb-pa80-rebuild
+
+# Compatibility policy: descendants may be measured after protected content
+# is restored. Default packs instead retain permanent invalid ancestry.
+verification: {void: until_restored}

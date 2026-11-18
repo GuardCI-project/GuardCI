@@ -1,0 +1,243 @@
+# ORFS config.mk variable -> delta tag (DESIGN.md §3.4).
+#
+# A commit that changes a variable receives every tag listed for it.
+# Variables not listed here map to `unknown`, which routes to heavy
+# verification. Keep this table conservative: when a variable plausibly
+# affects a signoff dimension, tag it `physical_integrity` as well.
+#
+# Tags: constraints synthesis floorplan placement cts routing
+#       physical_integrity library_refs design_refs scripts measurement
+#
+# `design_refs`  : variables that decide WHICH design is implemented
+#                  (checked by `design_identity`, hard).
+# `library_refs` : variables that point at libraries / LEF / RC models
+#                  (checked by `protected_refs`, route -> heavy).
+# `measurement`  : variables with no effect on the artifacts the CI
+#                  rebuilds (reporting, parallelism, naming); routed nowhere.
+
+# Deliberately unlisted (map to `unknown` → heavy): agent-invented or
+# tool-path variables that ORFS itself does not declare in
+# scripts/variables.yaml (ABC9_GIA_SCRIPT, ABC9_DELAY_PS,
+# CTS_CLK_BUFFER_LIST, SETUP_MOVE_SEQUENCE_POST_GLOBAL_ROUTE, PPA_WRAP,
+# REPAIR_SETUP_ONLY, SKIP_FLOORPLAN_TIMING_REPAIR,
+# SYNTH_ABC_DELAY_TARGET_PS, OUTPUT_REGISTER_PORTS, AREA_RESTRUCTURE,
+# KEPLER_FORMAL_EXE, OPENROAD_EXE, OPENSTA_EXE, YOSYS_EXE), and
+# KEEP_VARS. This is on purpose: we cannot know what they do, so they
+# stay heavy.
+
+design_refs:
+  - DESIGN_NAME
+  - DESIGN_NICKNAME
+  - PLATFORM
+  - VERILOG_FILES
+  - VERILOG_INCLUDE_DIRS
+  - VERILOG_TOP_PARAMS
+  - SYNTH_BLACKBOXES
+  - SYNTH_NETLIST_FILES   # decides which netlist is implemented
+  - SDC_FILE            # must resolve to impl.sdc (recipe) or the golden SDC
+
+library_refs:
+  - LIB_FILES
+  - ADDITIONAL_LIBS
+  - LEF_FILES
+  - ADDITIONAL_LEFS
+  - TECH_LEF
+  - SC_LEF
+  - GDS_FILES
+  - ADDITIONAL_GDS
+  - DFF_LIB_FILE
+  - RCX_RULES
+  - SET_RC_TCL
+  - CORNER
+  - PLATFORM_DIR
+  - LATCH_MAP_FILE
+  - CLKGATE_MAP_FILE
+  - ADDER_MAP_FILE
+  - FILL_CELLS
+  - TIE_SEPARATION
+  - TIEHI_CELL_AND_PORT
+  - TIELO_CELL_AND_PORT
+  - MIN_BUF_CELL_AND_PORTS
+  - HOLD_BUF_CELL
+  - ABC_DRIVER_CELL
+  - ABC_LOAD_IN_FF
+
+constraints:
+  - ABC_CLOCK_PERIOD_IN_PS
+  - SETUP_SLACK_MARGIN
+  - TNS_END_PERCENT
+  - SKIP_INCREMENTAL_REPAIR
+  - OPT_POST_GRT_WNS
+
+synthesis:
+  - ABC_AREA
+  - ABC_SCRIPT
+  - ABC_RETIME_SCRIPT
+  - ABC9_DELAY_TARGET
+  - PPA_ABC_SCRIPT
+  - PPA_ABC9_SCRIPT
+  - GIA_ABC9_SCRIPT
+  - SWAP_ARITH_OPERATORS
+  - SYNTH_ARGS
+  - SYNTH_OPERATIONS_ARGS
+  - SYNTH_SCRIPT
+  - SYNTH_HIERARCHICAL
+  - SYNTH_WRAPPED_ADDERS
+  - SYNTH_WRAPPED_OPERATORS
+  - SYNTH_RETIME_MODULES
+  - SYNTH_USE_SYN
+  - SYNTH_CANONICALIZE_TCL
+  - SYNTH_SKIP_REPAIR
+  - SYNTH_MINIMUM_KEEP_SIZE
+  - SYNTH_KEEP_MODULES
+  - MAX_UNGROUP_SIZE
+  - REMOVE_ABC_BUFFERS
+  - INFER_CLKGATES
+  - OPENROAD_HIERARCHICAL
+  - DONT_USE_CELLS
+  - QN_RETAP
+  - QN_BYPASS
+  - SYNTH_HDL_FRONTEND
+  - SYNTH_NETLIST_FILES   # also design_refs
+  - POS_CLKGATE_AND_PORTS
+  - SYNTH_INSBUF
+  - SYNTH_REPEATABLE_BUILD
+
+floorplan:
+  - CORE_UTILIZATION
+  - CORE_ASPECT_RATIO
+  - CORE_MARGIN
+  - DIE_AREA
+  - CORE_AREA
+  - FLOORPLAN_DEF
+  - PLACE_PINS_ARGS
+  - IO_CONSTRAINTS
+  - IO_PLACER_H
+  - IO_PLACER_V
+  - MACRO_PLACEMENT
+  - MACRO_PLACEMENT_TCL
+  - MACRO_PLACE_HALO
+  - RTLMP_FLOW
+  - RTLMP_ARGS
+  - POST_FLOORPLAN_TCL
+  - PRE_FLOORPLAN_TCL
+  - MATCH_CELL_FOOTPRINT  # earliest declared stage: floorplan
+  - SKIP_REPAIR_TIE_FANOUT  # also physical_integrity
+
+placement:
+  - PLACE_DENSITY
+  - PLACE_DENSITY_LB_ADDON
+  - GLOBAL_PLACEMENT_ARGS
+  - DETAIL_PLACEMENT_ARGS
+  - GPL_TIMING_DRIVEN
+  - GPL_ROUTABILITY_DRIVEN
+  - GPL_RANDOM_SEED
+  - GPL_KEEP_OVERFLOW
+  - CELL_PAD_IN_SITES_GLOBAL_PLACEMENT
+  - CELL_PAD_IN_SITES_DETAIL_PLACEMENT
+  - ENABLE_PLACE_REPAIR_TIMING
+  - SETUP_MOVE_SEQUENCE
+  - REPAIR_MAX_UTILIZATION
+  - SKIP_GATE_CLONING
+  - SKIP_LAST_GASP
+  - SKIP_PIN_SWAP
+  - RECOVER_POWER
+  - DONT_BUFFER_PORTS
+  - BUFFER_PORTS_ARGS
+  - PRE_GLOBAL_PLACE_TCL
+  - POST_RESIZE_TCL
+  - PRE_RESIZE_TCL
+  - DPO_MAX_DISPLACEMENT
+
+cts:
+  - CTS_ARGS
+  - CTS_BUF_LIST
+  - CTS_BUF_DISTANCE
+  - CTS_CLUSTER_DIAMETER
+  - CTS_CLUSTER_SIZE
+  - CTS_SNAPSHOT
+  - SKIP_CTS_REPAIR_TIMING
+  - MIN_CLK_ROUTING_LAYER
+  - MAX_CLK_ROUTING_LAYER
+  - PRE_CTS_TCL
+  - POST_CTS_TCL
+  - SKIP_CRIT_VT_SWAP       # earliest declared stage: cts
+
+routing:
+  - GLOBAL_ROUTE_ARGS
+  - DETAILED_ROUTE_ARGS
+  - DETAILED_ROUTE_END_ITERATION
+  - MIN_ROUTING_LAYER
+  - MAX_ROUTING_LAYER
+  - ROUTING_LAYER_ADJUSTMENT
+  - FASTROUTE_TCL
+  - PRE_GLOBAL_ROUTE_TCL
+  - PRE_DETAIL_ROUTE_TCL
+  - POST_DETAIL_ROUTE_TCL
+  - PR_REPAIR_ROUNDS
+  - PR_REPAIR_SEQ
+  - PR_REPAIR_TNS
+  - REPAIR_PDN_VIA_LAYER
+  - ENABLE_RESISTANCE_AWARE   # declared stage: grt
+  - POST_GLOBAL_ROUTE_TCL     # declared stage: grt
+  - PRE_FINAL_REPORT_TCL      # declared stage: final
+
+physical_integrity:
+  - HOLD_SLACK_MARGIN      # negative values disable hold repair
+  - SLEW_MARGIN
+  - CAP_MARGIN
+  - TAPCELL_TCL            # empty script removes tap cells
+  - PDN_TCL
+  - SKIP_ANTENNA_REPAIR
+  - SKIP_CTS_REPAIR_TIMING
+  - SKIP_INCREMENTAL_REPAIR
+  - DONT_USE_CELLS
+  - FILL_CELLS
+  - MIN_ROUTING_LAYER
+  - MAX_ROUTING_LAYER
+  - REPAIR_PDN_VIA_LAYER
+  - CORE_UTILIZATION       # IR / routability
+  - PLACE_DENSITY
+  - SKIP_REPAIR_TIE_FANOUT
+
+measurement:
+  - FLOW_VARIANT
+  - NUM_CORES
+  - EQUIVALENCE_CHECK
+  - GENERATE_ARTIFACTS
+  - KLAYOUT_TECH_FILE
+  - KLAYOUT_DRC_FILE
+  - KLAYOUT_LVS_FILE
+  - KLAYOUT_LAYER_PROPERTIES
+  - GUI_TIMING
+  - SKIP_REPORT_METRICS
+  - SKIP_LAST_GASP_REPORT
+  - RUN_PRE_SYNTH_CHECKS
+
+# ORFS flow scripts (recipe path scripts/**): file name -> tags.
+# Files not listed map to `scripts` + `unknown`.
+scripts:
+  synth.tcl:              [synthesis]
+  synth_preamble.tcl:     [synthesis]
+  synth_hier_report.tcl:  [synthesis]
+  floorplan.tcl:          [floorplan]
+  io_placement.tcl:       [floorplan]
+  io_placement_random.tcl: [floorplan]
+  macro_place.tcl:        [floorplan]
+  tapcell.tcl:            [physical_integrity]
+  pdn.tcl:                [physical_integrity]
+  global_place.tcl:       [placement]
+  global_place_skip_io.tcl: [placement]
+  resize.tcl:             [placement, physical_integrity]
+  detail_place.tcl:       [placement]
+  cts.tcl:                [cts]
+  global_route.tcl:       [routing]
+  detail_route.tcl:       [routing]
+  fillcell.tcl:           [physical_integrity]
+  density_fill.tcl:       [physical_integrity]
+  final_report.tcl:       [measurement]
+  report_metrics.tcl:     [measurement]
+  write_ref_sdc.tcl:      [constraints]
+  load.tcl:               [library_refs, unknown]
+  variables.mk:           [unknown]
+  Makefile:               [unknown]
