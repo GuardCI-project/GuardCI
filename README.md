@@ -4,7 +4,7 @@
 
 <p align="center">
   <strong>Continuous verification for autonomous EDA.</strong><br>
-  Push a recipe. Verify the contract. Deliver the evidence.
+  Push a recipe. Verify the contract. Deliver verified designs.
 </p>
 
 <p align="center">
